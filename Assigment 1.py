@@ -21,8 +21,43 @@ def modelFunction():
     RiverDataMM = importRiverDataMonth("januar", RiverDataYY)
     indexUp = RiverDataMM['beregningspunktlokalid'] == "Novana_Model_MOELLEAA_DK1_3687.0"
     indexDown = RiverDataMM['beregningspunktlokalid'] == "Novana_Model_MOELLEAA_DK1_13500.0"
+    dfIndexUp = RiverDataMM[indexUp]
+    dfIndexDown = RiverDataMM[indexDown]
+    indexUpNb = dfIndexUp.index.values[0]
+    indexDownNb = dfIndexDown.index.values[0]
+    RangeIndex = np.abs(indexDownNb-indexUpNb)+1
+    DfbetweenUpandDown = RiverDataMM.drop(RiverDataMM.index[0:indexUpNb]).drop(RiverDataMM.index[indexDownNb:-1])
+
+
+
 
     # Initialize variable needed by the model
+
+
+    RiverQ = pd.DataFrame({"flow" :DfbetweenUpandDown["vandfoering"],
+                           "node ID" : DfbetweenUpandDown["beregningspunktlokalid"],
+                          "X": DfbetweenUpandDown["X"], "Y": DfbetweenUpandDown['Y'],
+                           "Distance": np.empty(RangeIndex),
+                           "CSOFlow": np.empty(RangeIndex)})
+
+    RiverC = pd.DataFrame({"SimConcentration" : np.zeros(RangeIndex), "X": RiverQ["X"], "Y": RiverQ['Y'],
+                           "Distance": RiverQ["Distance"]})
+
+    EQS_exc = RiverC.copy()
+    print(RiverQ['node ID'].iloc[0].split("_")[-1])
+
+    distance_array =[]
+    for i in range(RangeIndex):
+        stringName = RiverQ['node ID'].iloc[i].split("_")[-1]
+        distance_array.append(float(stringName)-3687)
+    RiverQ['Distance'] = distance_array
+
+    # The simple model advection-dilution model
+
+    
+
+    return RiverQ
+
 
 
 
@@ -39,9 +74,13 @@ def task1_2_a():
 
 
 
+
+
 if __name__ == '__main__':
 
-    task1_2_a()
+    #task1_2_a()
+
+    df = modelFunction()
 
     # file = pd.read_csv("CSO_Mollea.csv", sep=",")
     # file.rename(columns={'Vandmængd': 'Water_volume', "Antal over": "Nb_overflow", "Bygværkst": "Building_type"}, inplace=True)
