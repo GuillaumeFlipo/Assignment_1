@@ -11,7 +11,8 @@ def modelFunction():
 
     #Initial operations
 
-    CSOdata = pd.read_csv('bereg.csv', sep=",", decimal=".", encoding='latin-1')
+    CSOdata = pd.read_csv('Hub_dist.csv', sep=",", decimal=".", encoding='latin-1')
+    CSOdata.rename(columns={"BygvÃ¦rkst" : "Bygv", "VandmÃ¦ngd" : "water_volume", "Antal over": "Nb_overflow" }, inplace=True)
     RiverData = pd.read_csv('maaned.csv', sep=",",decimal=".", encoding='latin-1')
 
     #Data preperation
@@ -33,6 +34,8 @@ def modelFunction():
 
     # Initialize variable needed by the model
 
+    t_CSO = 3*3600
+
 
     RiverQ = pd.DataFrame({"flow" :DfbetweenUpandDown["vandfoering"],
                            "node ID" : DfbetweenUpandDown["beregningspunktlokalid"],
@@ -44,7 +47,7 @@ def modelFunction():
                            "Distance": RiverQ["Distance"]})
 
     EQS_exc = RiverC.copy()
-    print(RiverQ['node ID'].iloc[0].split("_")[-1])
+
 
     distance_array =[]
     for i in range(RangeIndex):
@@ -54,9 +57,31 @@ def modelFunction():
 
     # The simple model advection-dilution model
 
-    
+    C0 = 1
+    CS0_conc =1
+    RiverC.iloc[0]["SimConcentration"] = C0
 
-    return RiverQ
+
+    for i in range(1,RangeIndex):
+        CSO_vector = CSOdata[CSOdata['HubName'].str.contains(RiverQ['node ID'].iloc[i])]
+
+
+        if (len(CSO_vector) > 0):
+            indexCSO = CSO_vector.index.values
+            CSO_flux =0
+            CSO_Qtot = 0
+
+            for j in range(len(CSO_vector)):
+                if float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"])>0:
+                    V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * (
+                                1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
+                    Q_CSO = V_CSO / t_CSO
+                    CSO_flux += Q_CSO * CS0_conc
+                    CSO_Qtot += Q_CSO
+            print(CSO_Qtot)
+            print(CSO_flux)
+
+    return CSOdata
 
 
 
