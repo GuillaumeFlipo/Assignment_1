@@ -34,17 +34,19 @@ def modelFunction():
 
     # Initialize variable needed by the model
 
-    t_CSO = 3*3600
+    t_CSO = 4.3*3600
 
 
     RiverQ = pd.DataFrame({"flow" :DfbetweenUpandDown["vandfoering"],
                            "node ID" : DfbetweenUpandDown["beregningspunktlokalid"],
                           "X": DfbetweenUpandDown["X"], "Y": DfbetweenUpandDown['Y'],
-                           "Distance": np.empty(RangeIndex),
-                           "CSOFlow": np.empty(RangeIndex)})
+                           "Distance": np.zeros(RangeIndex),
+                           "Qadded": np.zeros(RangeIndex)})
+    RiverQ = RiverQ.reset_index()
 
     RiverC = pd.DataFrame({"SimConcentration" : np.zeros(RangeIndex), "X": RiverQ["X"], "Y": RiverQ['Y'],
                            "Distance": RiverQ["Distance"]})
+    RiverC = RiverC.reset_index()
 
     EQS_exc = RiverC.copy()
 
@@ -54,18 +56,17 @@ def modelFunction():
         stringName = RiverQ['node ID'].iloc[i].split("_")[-1]
         distance_array.append(float(stringName)-3687)
     RiverQ['Distance'] = distance_array
-
+    
     # The simple model advection-dilution model
 
-    C0 = 1
+    C0 = 0.1
     CS0_conc =1
-    RiverC.iloc[0]["SimConcentration"] = C0
-
-
+    EQS = 0.2
+    RiverC["SimConcentration"][0] = C0
+    
     for i in range(1,RangeIndex):
         CSO_vector = CSOdata[CSOdata['HubName'].str.contains(RiverQ['node ID'].iloc[i])]
-
-
+        
         if (len(CSO_vector) > 0):
             indexCSO = CSO_vector.index.values
             CSO_flux =0
@@ -78,9 +79,18 @@ def modelFunction():
                     Q_CSO = V_CSO / t_CSO
                     CSO_flux += Q_CSO * CS0_conc
                     CSO_Qtot += Q_CSO
-            print(CSO_Qtot)
-            print(CSO_flux)
+            
+            RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i-1]
+            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
 
+        else:
+            RiverQ["Qadded"][i] = RiverQ["Qadded"][i-1]
+            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1]))/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
+    
+    EQS_exc = RiverC["SimConcentration"]>EQS
+    
+    plt.plot(RiverQ["Distance"],RiverC["SimConcentration"])
+    plt.plot(RiverQ["Distance"],EQS_exc)
     return CSOdata
 
 
