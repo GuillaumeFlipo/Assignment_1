@@ -7,7 +7,7 @@ def importRiverDataMonth(month, df):
     return df[df['maaned'] == month].reset_index(drop=True)
 
 
-def modelFunction():
+def modelFunction(C0,CS0_conc,EQS):
 
     #Initial operations
 
@@ -59,9 +59,6 @@ def modelFunction():
     
     # The simple model advection-dilution model
 
-    C0 = 0.1
-    CS0_conc =1
-    EQS = 0.2
     RiverC["SimConcentration"][0] = C0
     
     for i in range(1,RangeIndex):
@@ -79,6 +76,8 @@ def modelFunction():
                     Q_CSO = V_CSO / t_CSO
                     CSO_flux += Q_CSO * CS0_conc
                     CSO_Qtot += Q_CSO
+                    
+            print(len(CSO_vector))
             
             RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i-1]
             RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
@@ -115,7 +114,7 @@ if __name__ == '__main__':
 
     #task1_2_a()
 
-    df = modelFunction()
+    df = modelFunction(C0=0.1,CS0_conc=1,EQS=0.3)
 
     # file = pd.read_csv("CSO_Mollea.csv", sep=",")
     # file.rename(columns={'Vandmængd': 'Water_volume', "Antal over": "Nb_overflow", "Bygværkst": "Building_type"}, inplace=True)
