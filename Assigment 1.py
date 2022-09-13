@@ -35,6 +35,7 @@ def modelFunction(C0,CS0_conc,EQS):
     # Initialize variable needed by the model
 
     t_CSO = 4.3*3600
+    theta = 2.31/100
 
 
     RiverQ = pd.DataFrame({"flow" :DfbetweenUpandDown["vandfoering"],
@@ -71,13 +72,13 @@ def modelFunction(C0,CS0_conc,EQS):
 
             for j in range(len(CSO_vector)):
                 if float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"])>0:
-                    V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * (
-                                1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
+                    V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * theta #(
+                               # 1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
                     Q_CSO = V_CSO / t_CSO
                     CSO_flux += Q_CSO * CS0_conc
                     CSO_Qtot += Q_CSO
                     
-            print(len(CSO_vector))
+            print(len(CSO_vector),CSO_Qtot)
             
             RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i-1]
             RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
