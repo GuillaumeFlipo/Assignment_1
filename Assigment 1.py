@@ -93,6 +93,10 @@ def modelFunction(C0,CS0_conc,EQS):
     return CSOdata
 
 
+def sensitivity_analysis(dParam) :
+    for dP in dParam:
+        pass
+    return
 
 
 def task1_2_a():
