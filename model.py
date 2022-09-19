@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def importRiverDataMonth(month, df):
     return df[df['maaned'] == month].reset_index(drop=True)
 
-def modelFunction(C0,CS0_conc,EQS):
+def modelFunction(C0,CS0_conc,EQS=2):
 
     #Initial operations
 
