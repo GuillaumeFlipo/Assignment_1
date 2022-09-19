@@ -73,7 +73,7 @@ def modelFunction(C0,CS0_conc,EQS):
                     CSO_flux += Q_CSO * CS0_conc
                     CSO_Qtot += Q_CSO
                     
-            print(len(CSO_vector),CSO_Qtot)
+            #print(len(CSO_vector),CSO_Qtot)
             
             RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i-1]
             RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
@@ -84,9 +84,9 @@ def modelFunction(C0,CS0_conc,EQS):
     
     EQS_exc = RiverC["SimConcentration"]>EQS
     
-    plt.plot(RiverQ["Distance"],RiverC["SimConcentration"])
-    plt.plot(RiverQ["Distance"],EQS_exc)
-    return CSOdata
+    #plt.plot(RiverQ["Distance"],RiverC["SimConcentration"])
+    #plt.plot(RiverQ["Distance"],EQS_exc)
+    return RiverC
 
 if __name__ == '__main__':
 
