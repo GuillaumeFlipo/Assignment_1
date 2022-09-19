@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -367,13 +367,3 @@ if __name__ == '__main__':
     #task1_2_a()
 
     df = modelFunction(C0=0.1,CS0_conc=1,EQS=0.3)
-
-
-
-
-
-
-
-
-
->>>>>>> 6d5143430ee342aaebc953a9343688e1c650aa87
