@@ -26,9 +26,9 @@ def sensitivity_analysis(C0, CS0_conc) :
     
     percents = np.concatenate([dParam_rev,dParam])
     plt.figure()
-    plt.plot(percents,result[0,:],label="C0 senisivity")
+    plt.plot(percents,abs(result[0,:]),label="C0 senisivity")
     plt.legend()
-    plt.plot(percents,result[1,:],label="CS0 senisivity")
+    plt.plot(percents,abs(result[1,:]),label="CS0 senisivity")
     plt.legend()
     plt.show()
     return result # first row is C0, second is CS0
