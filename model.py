@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 def importRiverDataMonth(month, df):
     return df[df['maaned'] == month].reset_index(drop=True)
 
-def modelFunction(C0,CS0_conc,EQS=2):
+def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
 
     #Initial operations
+
 
     CSOdata = pd.read_csv('Hub_dist.csv', sep=",", decimal=".", encoding='latin-1')
     CSOdata.rename(columns={"BygvÃ¦rkst" : "Bygv", "VandmÃ¦ngd" : "water_volume", "Antal over": "Nb_overflow" }, inplace=True)
@@ -72,7 +73,7 @@ def modelFunction(C0,CS0_conc,EQS=2):
                     V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * theta #(
                                # 1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
                     Q_CSO = V_CSO / t_CSO
-                    CSO_flux += Q_CSO * CS0_conc
+                    CSO_flux += Q_CSO* CS0_conc
                     CSO_Qtot += Q_CSO
                     
             #print(len(CSO_vector),CSO_Qtot)
@@ -92,4 +93,4 @@ def modelFunction(C0,CS0_conc,EQS=2):
 
 if __name__ == '__main__':
 
-    df = modelFunction(C0=0.1,CS0_conc=1,EQS=0.3)
+    df = modelFunction()

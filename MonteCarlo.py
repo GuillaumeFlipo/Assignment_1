@@ -6,7 +6,7 @@ from scipy.stats import lognorm, norm
 
 def monteCarlo(C0=0):
     n_MC = 100
-    Concentration_df = modelFunction(C0,CS0_conc=1)
+    Concentration_df = modelFunction()
     Concentration = Concentration_df['SimConcentration']
 
     Concentration_MC = np.zeros([len(Concentration), n_MC])
@@ -25,7 +25,7 @@ def monteCarlo(C0=0):
     mean = ((x1 * p2ppf) - (x2 * p1ppf)) / (p2ppf - p1ppf)
 
     CSO_conc_sample = lognorm.rvs(s=scale, scale=np.exp(mean), size=n_MC)
-    print(CSO_conc_sample)
+
 
     for i in range(n_MC):
         Concentration_MC[:,i] = modelFunction(C0, CSO_conc_sample[i])["SimConcentration"]
@@ -34,15 +34,15 @@ def monteCarlo(C0=0):
     q95 = np.percentile(Concentration_MC, 95, axis=1)
 
     t = Concentration_df['Distance']
-    print(t)
+
     plt.figure()
     plt.rcParams.update({'font.size': 20})
     ax1 = plt.subplot(2, 1, 1)
     plt.plot(t, Concentration, color='green', linestyle='-', label='deterministic')
     plt.legend()
     plt.grid()
-    ax1.set_xlabel("Distance [d]")
-    ax1.set_ylabel("concentration [mg/l]")
+    ax1.set_xlabel("Distance [m]")
+    ax1.set_ylabel("concentration [μg/l]")
 
     ax2 = plt.subplot(2, 1, 2)
     for i in range(n_MC):
@@ -53,8 +53,8 @@ def monteCarlo(C0=0):
     plt.plot(t, q95, color='red', linestyle=('--'), label='95% percentile')
     plt.legend()
     plt.grid()
-    ax2.set_xlabel("time [d]")
-    ax2.set_ylabel("concentration [mg/l]")
+    ax2.set_xlabel("Distance [m]")
+    ax2.set_ylabel("concentration [μg/l]")
     plt.show()
 
 
