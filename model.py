@@ -43,6 +43,7 @@ def modelFunction(C0,CS0_conc,EQS=2):
     RiverC = pd.DataFrame({"SimConcentration" : np.zeros(RangeIndex), "X": RiverQ["X"], "Y": RiverQ['Y'],
                            "Distance": RiverQ["Distance"]})
     RiverC = RiverC.reset_index()
+    pd.set_option('mode.chained_assignment', None)
 
     EQS_exc = RiverC.copy()
 
