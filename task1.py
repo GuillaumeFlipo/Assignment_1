@@ -24,7 +24,7 @@ def task1_2_a():
     print(water_volume_input)
     
     # Importing file to get N concentration in Lyngby lake (mg/L)
-    fileNitrogen = pd.read_csv('Data_WatPoll_2022_to_2014_Ordered.csv', sep=",", decimal=".", encoding='UTF-8')
+    fileNitrogen = pd.read_excel('Data_WatPoll_2022_to_2014_Ordered.xlsx')
     print(fileNitrogen)
     # Getting only Lyngby lake data
     lyngbyData = fileNitrogen[fileNitrogen['Site'].str.match('Lyngby sø (mg/L)')]
