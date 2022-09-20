@@ -8,6 +8,8 @@ def importRiverDataMonth(month, df):
 def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
 
     #Initial operations
+    CS0_conc = CS0_conc*1000
+    C0 *= 1000
 
 
     CSOdata = pd.read_csv('Hub_dist.csv', sep=",", decimal=".", encoding='latin-1')
@@ -59,6 +61,8 @@ def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
     # The simple model advection-dilution model
 
     RiverC["SimConcentration"][0] = C0
+
+    Volume_decharged = 0
     
     for i in range(1,RangeIndex):
         CSO_vector = CSOdata[CSOdata['HubName'].str.contains(RiverQ['node ID'].iloc[i])]
@@ -72,23 +76,30 @@ def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
                 if float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"])>0:
                     V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * theta #(
                                # 1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
+                    Volume_decharged += V_CSO
                     Q_CSO = V_CSO / t_CSO
                     CSO_flux += Q_CSO* CS0_conc
                     CSO_Qtot += Q_CSO
                     
             #print(len(CSO_vector),CSO_Qtot)
-            
-            RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i-1]
+
+            RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i - 1]
             RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
 
         else:
             RiverQ["Qadded"][i] = RiverQ["Qadded"][i-1]
             RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1]))/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
-    
+
+    RiverC["SimConcentration"] = RiverC["SimConcentration"]*10**-3
     EQS_exc = RiverC["SimConcentration"]>EQS
-    
-    #plt.plot(RiverQ["Distance"],RiverC["SimConcentration"])
-    #plt.plot(RiverQ["Distance"],EQS_exc)
+
+
+
+    # plt.plot(RiverQ["Distance"],RiverC["SimConcentration"])
+    # plt.plot(RiverQ["Distance"],EQS_exc)
+    # plt.xlabel("Distance [m]")
+    # plt.ylabel("Concentration [μg/l]")
+    # plt.title('Concentration of Ibuprofene in Mollea river')
     return RiverC
 
 if __name__ == '__main__':
