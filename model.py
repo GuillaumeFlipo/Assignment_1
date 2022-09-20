@@ -53,6 +53,7 @@ def modelFunction(C0,CS0_conc,EQS=2):
         stringName = RiverQ['node ID'].iloc[i].split("_")[-1]
         distance_array.append(float(stringName)-3687)
     RiverQ['Distance'] = distance_array
+    RiverC['Distance'] = distance_array
     
     # The simple model advection-dilution model
 
