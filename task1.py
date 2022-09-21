@@ -14,22 +14,29 @@ def task1_2_a():
     # Choosing all data from the input node (from the Lyngby lake) based on the assignment
     nodeInput = fileAar[fileAar["beregningspunktlokalid"] == "Novana_Model_MOELLEAA_DK1_4083.0"]
     meanFlow = nodeInput["vandfoering"].mean()
+    print("Mean Flow: ")
     print(meanFlow)
     # Data is in m3/s, converting to volume per year
     water_volume_input = meanFlow*3600*24*365.25
     # Taking the sum of all yearly volumes from CSOs
     water_volume_CSO = file.Water_volume.sum()
     print(file)
+    print("Mean volume CSO")
     print(water_volume_CSO)
+    print("Mean volume input")
     print(water_volume_input)
     
     # Importing file to get N concentration in Lyngby lake (mg/L)
     fileNitrogen = pd.read_excel('Data_WatPoll_2022_to_2014_Ordered.xlsx')
     print(fileNitrogen)
     # Getting only Lyngby lake data
-    lyngbyData = fileNitrogen[fileNitrogen['Site'].str.match('Lyngby sø (mg/L)')]
+    lyngbyData = fileNitrogen.iloc[3]
+    print(lyngbyData)
     # # Getting the average Nitrogen concentration (mg/L) and converting to kg
-    # lyngbyNitogenMean = lyngbyData.mean()/1000000
+    lyngbyNitogenMean = lyngbyData[0].mean()/1000000
+    totalNitrogen = (water_volume_CSO*1000)*lyngbyNitogenMean
+    print("Total nitrogen Lyngby lake: ")
+    print(totalNitrogen)
     
 
 def task1_1():
@@ -41,7 +48,8 @@ def task1_1():
                 inplace=True)
     indexOverflow = file[file["Nb_overflow"] > 0].index
     Nb_CS0_overflow = len(indexOverflow)
-    NameCSOMostOverflow = file.iloc[file['Nb_overflow'].idxmax()].Navn
+    NameCSOMostOverflowEvents = file.iloc[file['Nb_overflow'].idxmax()].Navn
+    # NameCSOMostOverflowVolume = file.iloc[file[''].idxmax()].Navn
     meanDischarge = file.Water_volume.mean()
     medianDischarge = file.Water_volume.median()
     # Ploting distribution with mean and median
