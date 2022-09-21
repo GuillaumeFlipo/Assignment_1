@@ -32,19 +32,22 @@ def monteCarlo(C0=0):
     q05 = np.percentile(Concentration_MC, 5, axis=1)
     q50 = np.percentile(Concentration_MC, 50, axis=1)
     q95 = np.percentile(Concentration_MC, 95, axis=1)
+    print('max q05', np.max(q05))
+    print('max median', np.max(q50))
+    print('max q95', np.max(q95))
 
     t = Concentration_df['Distance']
 
     plt.figure()
     plt.rcParams.update({'font.size': 20})
-    ax1 = plt.subplot(2, 1, 1)
-    plt.plot(t, Concentration, color='green', linestyle='-', label='deterministic')
-    plt.legend()
-    plt.grid()
-    ax1.set_xlabel("Distance [m]")
-    ax1.set_ylabel("concentration [μg/l]")
+    # ax1 = plt.subplot(2, 1, 1)
+    # plt.plot(t, Concentration, color='green', linestyle='-', label='deterministic')
+    # plt.legend()
+    # plt.grid()
+    # ax1.set_xlabel("Distance [m]")
+    # ax1.set_ylabel("concentration [μg/l]")
 
-    ax2 = plt.subplot(2, 1, 2)
+
     for i in range(n_MC):
         plt.plot(t, Concentration_MC[:, i], color=(.7, .7, .7), linestyle='-')
 
@@ -53,8 +56,8 @@ def monteCarlo(C0=0):
     plt.plot(t, q95, color='red', linestyle=('--'), label='95% percentile')
     plt.legend()
     plt.grid()
-    ax2.set_xlabel("Distance [m]")
-    ax2.set_ylabel("concentration [μg/l]")
+    plt.xlabel("Distance [m]")
+    plt.ylabel("concentration [μg/l]")
     plt.show()
 
 
