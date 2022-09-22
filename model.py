@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def importRiverDataMonth(month, df):
     return df[df['maaned'] == month].reset_index(drop=True)
 
-def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
+def modelFunction(C0=0,CS0_conc= 1.8,t_CSO=4.3,theta=2.31,coef_V_CSO = 1,coef_Qi = 1,EQS=1700):
 
     #Initial operations
     CS0_conc = CS0_conc*1000
@@ -32,8 +32,8 @@ def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
 
     # Initialize variable needed by the model
 
-    t_CSO = 4.3*3600
-    theta = 2.31/100
+    t_CSO = t_CSO*3600
+    theta = theta/100
 
 
     RiverQ = pd.DataFrame({"flow" :DfbetweenUpandDown["vandfoering"],
@@ -74,7 +74,7 @@ def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
 
             for j in range(len(CSO_vector)):
                 if float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"])>0:
-                    V_CSO = float(CSOdata.iloc[indexCSO[j]]['water_volume']) * theta #(
+                    V_CSO = coef_V_CSO*float(CSOdata.iloc[indexCSO[j]]['water_volume']) * theta #(
                                # 1 / float(CSOdata.iloc[indexCSO[j]]["Nb_overflow"]))
                     Volume_decharged += V_CSO
                     Q_CSO = V_CSO / t_CSO
@@ -84,11 +84,11 @@ def modelFunction(C0=0,CS0_conc= 1.8,EQS=1700):
             #print(len(CSO_vector),CSO_Qtot)
 
             RiverQ["Qadded"][i] = CSO_Qtot + RiverQ["Qadded"][i - 1]
-            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
+            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(coef_Qi*RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1])+CSO_flux)/(coef_Qi*RiverQ["flow"][i] + RiverQ["Qadded"][i])
 
         else:
             RiverQ["Qadded"][i] = RiverQ["Qadded"][i-1]
-            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1]))/(RiverQ["flow"][i] + RiverQ["Qadded"][i])
+            RiverC["SimConcentration"][i] = (RiverC["SimConcentration"][i-1]*(coef_Qi*RiverQ["flow"][i-1] + RiverQ["Qadded"][i-1]))/(coef_Qi*RiverQ["flow"][i] + RiverQ["Qadded"][i])
 
     RiverC["SimConcentration"] = RiverC["SimConcentration"]*10**-3
     EQS_exc = RiverC["SimConcentration"]>EQS
