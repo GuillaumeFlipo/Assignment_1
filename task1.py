@@ -20,8 +20,8 @@ def task1_2_a():
     water_volume_input = meanFlow*3600*24*365.25
     # Taking the sum of all yearly volumes from CSOs
     water_volume_CSO = file.Water_volume.sum()
-    print("Mean volume CSO: " + str(water_volume_CSO))
-    print("Mean volume Lyngby lake input: " + str(water_volume_input))
+    print("Total volume discharged by CSOs m3: " + str(water_volume_CSO))
+    print("Mean volume Lyngby lake input m3: " + str(water_volume_input))
     print("% of CSO volume to total water volume: ")
     percentCSOtoInput = water_volume_CSO*100/(water_volume_CSO + water_volume_input)
     print(percentCSOtoInput)
@@ -31,9 +31,9 @@ def task1_2_a():
     # Getting only Lyngby lake data
     lyngbyData = fileNitrogen.iloc[3]    
     # Getting the average Nitrogen concentration (mg/L)
-    lyngbyNitogenMean = lyngbyData.mean()
-    print("Lyngby Nitrogen mean concentration mg/L (2002-2014): " + str(lyngbyNitogenMean))
-    totalNitrogenInput = (water_volume_input*1000)*(lyngbyNitogenMean/1000000)
+    lyngbyNitrogenMean = lyngbyData.mean()
+    print("Lyngby Nitrogen mean concentration mg/L (2002-2014): " + str(lyngbyNitrogenMean))
+    totalNitrogenInput = (water_volume_input*1000)*(lyngbyNitrogenMean/1000000)
     print("Total yearly nitrogen Lyngby lake (kg): " + str(totalNitrogenInput))
     # Getting total nitrogen (kg) discharged by CSOs
     totalNitrogenCSO = file['Total-N (k'].sum()
@@ -41,6 +41,37 @@ def task1_2_a():
     percentCSONtoInputN = totalNitrogenCSO*100/(totalNitrogenCSO + totalNitrogenInput)
     print("% of CSO's kg of nitrogen to total kg of nitrogen discharged: ")
     print(percentCSONtoInputN)
+    
+    # Measures of dispersion of the nitrogen data
+    print("Interquartile range for Water Pollution Course Data: ")
+    print(str(lyngbyData.quantile(0.75)) + ' - ' + str(lyngbyData.quantile(0.25)))
+    print(lyngbyData.quantile(0.75) - lyngbyData.quantile(0.25))
+    
+    print("Interquartile range for CSO Nitrogen Data: ")
+    print(str(file['Total-N (k'].quantile(0.75)) + ' - ' + str(file['Total-N (k'].quantile(0.25)))
+    print(file['Total-N (k'].quantile(0.75) - file['Total-N (k'].quantile(0.25))
+    
+    # Ploting distribution of nitrogen measurements with mean and median
+    # plt.hist(x = lyngbyData.values, bins=20, alpha=0.65)
+    # plt.axvline(lyngbyNitrogenMean, color='b', linestyle=':', linewidth=1)
+    # plt.text(lyngbyNitrogenMean*1.05, 3*0.9, 'Mean: {:.2f}'.format(lyngbyNitrogenMean))
+    # plt.axvline(lyngbyData.sort_values().median(), color='r', linestyle='-', linewidth=1)
+    # plt.text(lyngbyData.sort_values().median()*1.05, 3*0.8, 'Median: {:.2f}'.format(lyngbyData.sort_values().median()))
+    # plt.xlabel('Nitrogen concentration (mg/L)')
+    # plt.ylabel('# of yearly measurements')
+    # plt.title('Distribution of nitrogen concentration from lake')
+    # plt.show()
+    
+    # Ploting distribution of CSO nitrogen discharged with mean and median
+    # plt.hist(x = file['Total-N (k'].values, bins=20, alpha=0.65)
+    # plt.axvline(file['Total-N (k'].mean(), color='b', linestyle=':', linewidth=1)
+    # plt.text(file['Total-N (k'].mean()*1.05, 5*0.9, 'Mean: {:.2f}'.format(file['Total-N (k'].mean()))
+    # plt.axvline(file['Total-N (k'].median(), color='r', linestyle='-', linewidth=1)
+    # plt.text(file['Total-N (k'].median()*1.5, 5*0.8, 'Median: {:.1f}'.format(file['Total-N (k'].median()))
+    # plt.xlabel('Nitrogen discharged (kg)')
+    # plt.ylabel('# of CSOs')
+    # plt.title('Distribution of nitrogen discharged by CSOs')
+    # plt.show()
     
 def task1_1():
     # Reading data exported from QGIS of the 10 CSOs
@@ -90,7 +121,7 @@ if __name__ == '__main__':
     # Close all figures
     plt.close('all')
     
-    task1_1()
+    # task1_1()
     task1_2_a()
 
     #df = modelFunction()
